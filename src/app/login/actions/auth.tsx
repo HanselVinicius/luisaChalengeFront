@@ -1,5 +1,5 @@
 
-export async function login(principal:string, credentials:string) {
+export async function login(principal:string, credentials:string) : Promise<{ success: boolean; message?: string; route?: string | null; }> {
   try {
     const response = await fetch('/api/v1/login', {
       method: 'POST',
@@ -8,9 +8,9 @@ export async function login(principal:string, credentials:string) {
       },
       body: JSON.stringify({ principal, credentials }),
     });
-
     if (response.status === 401) {
       return {
+        success: false,
         message: 'E-mail e/ou senha são inválidos',
       };
     }

@@ -6,15 +6,14 @@ export async function POST(req: NextRequest) {
     try {
       const { name, principal, credentials } = await req.json();
         const apiService = new ApiService(); 
-        const result = await apiService.post(`v1/auth/register`,{name,principal,credentials});
+        const result = await apiService.post<{token:string,clientName:string,favoriteListId:number,clientId:number}>(`v1/auth/register`,{name,principal,credentials});
 
-      if ('error' in result) {
+      if (result.status !== 200) {
         return NextResponse.json({ error: result.error }, { status: 401 });
       }
       const sessionService = new SessionService();
-      sessionService.createSession(result.token);
-      
-      return NextResponse.json({ status: 200, route: result.rota });
+      await sessionService.createSession(result.data!!);
+      return NextResponse.json({ status: 200, route: '/home' });
     } catch (error) {
       console.error('Request failed error:', error);
       return NextResponse.json(

@@ -1,20 +1,31 @@
-"use client"
+"use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { login } from "./actions/auth";
 
-export default function Login(){
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !password) {
       setError("Preencha todos os campos.");
       return;
     }
-    login(email, password)
+
+    const result = await login(email, password);
+
+    if (!result.success) {
+      setError(result.message ?? "Erro desconhecido");
+      return;
+    }
+
+    router.push(result.route!!);
     setError("");
   };
 
@@ -70,4 +81,4 @@ export default function Login(){
       </div>
     </div>
   );
-};
+}

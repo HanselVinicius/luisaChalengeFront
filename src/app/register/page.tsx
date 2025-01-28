@@ -1,14 +1,17 @@
-"use client"
-import { register } from "./actions/register";
+"use client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { register } from "./actions/register";
 
-export default function Register(){
+export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!name || !email || !password) {
@@ -16,8 +19,14 @@ export default function Register(){
       return;
     }
 
+    const result = await register(name, email, password);
 
-    register(name, email, password)
+    if (!result.success) {
+      setError(result.message ?? "Erro desconhecido");
+      return;
+    }
+
+    router.push(result.route!!);
     setError("");
   };
 
@@ -87,4 +96,4 @@ export default function Register(){
       </div>
     </div>
   );
-};
+}
