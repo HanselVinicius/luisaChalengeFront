@@ -5,13 +5,12 @@ export class SessionService {
   private static DEFAULT_EXPIRATION_HOURS = 3;
 
   public async createSession(
-    data: { token: string },
+    data: {token:string,clientName:string,favoriteListId:number,clientId:number},
     expirationHours: number = SessionService.DEFAULT_EXPIRATION_HOURS
   ) {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + expirationHours);
-
-    (await cookies()).set(SessionService.SESSION_KEY, data.token, {
+    (await cookies()).set(SessionService.SESSION_KEY, JSON.stringify(data), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       expires: expiresAt,
