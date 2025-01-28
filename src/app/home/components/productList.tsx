@@ -2,18 +2,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
+import { favorite } from "../actions/favorite";
 
-interface Product {
-  id: number;
-  title: string;
-  price: string;
-  category: string;
-  description: string;
-  image: string;
-}
 
 export default function ProductList() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductDto[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -22,7 +15,6 @@ export default function ProductList() {
     const fetchProducts = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_PRODUCTS_API_URL as string;
-        console.log("API URL:", apiUrl);
         const response = await fetch(`${apiUrl}products`);
         const data = await response.json();
         setProducts(data);
@@ -36,9 +28,14 @@ export default function ProductList() {
     fetchProducts();
   }, []);
 
-  const toggleFavorite = (id: number) => {
+  const toggleFavorite = async (product: ProductDto) => {
+    const id = product.id;
+    const isCurrentlyFavorite = favorites.includes(id);
+
+    await favorite(!isCurrentlyFavorite, product);
+
     setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
+      isCurrentlyFavorite ? prev.filter((fav) => fav !== id) : [...prev, id]
     );
   };
 
@@ -66,7 +63,7 @@ export default function ProductList() {
               <img
                 src={product.image}
                 alt={product.title}
-                className="w-full h-40 object-cover rounded-md"
+                className="w-full h-100 object-cover rounded-md"
               />
               <h2 className="text-xl font-semibold mt-3">{product.title}</h2>
               <p className="text-gray-600 text-sm">{product.category}</p>
@@ -75,7 +72,7 @@ export default function ProductList() {
 
               {/* Botão de Favorito */}
               <button
-                onClick={() => toggleFavorite(product.id)}
+                onClick={() => toggleFavorite(product)}
                 className="absolute top-4 right-4"
               >
                 <Heart
