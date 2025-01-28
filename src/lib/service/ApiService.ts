@@ -1,54 +1,53 @@
-export class ApiService{
-
-    private apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-    async post(endpoint:string, body:object){
+export class ApiService {
+    private apiUrl = process.env.NEXT_PUBLIC_API_URL as string;
+  
+    private async _request<T>(
+      method: "GET" | "POST" | "PUT" | "DELETE",
+      endpoint: string,
+      body?: object,
+      token?: string
+    ): Promise<{ status: number; data: T | null; error?: string }> {
+      try {
+        const headers: HeadersInit = {
+          "Content-Type": "application/json",
+        };
+  
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+  
         const response = await fetch(`${this.apiUrl}${endpoint}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body),
+          method,
+          headers,
+          body: body ? JSON.stringify(body) : undefined,
         });
-        
-        return response.json();
+  
+        const data = await response.json();
+  
+        if (!response.ok) {
+          return { status: response.status, data: null, error: data.message || "Erro na requisição" };
+        }
+  
+        return { status: response.status, data };
+      } catch (error) {
+        return { status: 500, data: null, error: "Erro interno no cliente" };
+      }
     }
-
-
-    async get(endpoint:string){
-        const response = await fetch(`${this.apiUrl}${endpoint}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        
-        return response.json();
+  
+    async get<T>(endpoint: string, token?: string) {
+      return this._request<T>("GET", endpoint, undefined, token);
     }
-
-
-    async put(endpoint:string, body:object){
-        const response = await fetch(`${this.apiUrl}${endpoint}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body),
-        });
-        
-        return response.json();
+  
+    async post<T>(endpoint: string, body: object, token?: string) {
+      return this._request<T>("POST", endpoint, body, token);
     }
-
-
-    async delete(endpoint:string){
-        const response = await fetch(`${this.apiUrl}${endpoint}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        
-        return response.json();
+  
+    async put<T>(endpoint: string, body: object, token?: string) {
+      return this._request<T>("PUT", endpoint, body, token);
     }
-
-}
+  
+    async delete<T>(endpoint: string, token?: string) {
+      return this._request<T>("DELETE", endpoint, undefined, token);
+    }
+  }
+  
