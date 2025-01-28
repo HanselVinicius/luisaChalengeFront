@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
 
 interface Product {
@@ -15,6 +16,7 @@ export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -42,7 +44,15 @@ export default function ProductList() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">Lista de Produtos</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Lista de Produtos</h1>
+        <button
+          onClick={() => router.push("/favoritos")}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+        >
+          Lista de Favoritos
+        </button>
+      </div>
 
       {loading ? (
         <p className="text-center text-gray-600">Carregando produtos...</p>
