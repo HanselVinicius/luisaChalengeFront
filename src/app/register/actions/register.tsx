@@ -1,4 +1,6 @@
-export async function register(name:string, principal:string, credentials:string) : Promise<{ success: boolean; message?: string; route?: string | null; }> {
+import { ResponseDto } from "@/lib/dto/ResponseDto";
+
+export async function register(name:string, principal:string, credentials:string) : Promise<ResponseDto> {
     try {
         const response = await fetch('/api/v1/register', {
           method: 'POST',
