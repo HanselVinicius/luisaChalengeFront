@@ -37,7 +37,6 @@ export class ApiService {
     try {
       return await response.json();
     } catch (error) {
-      console.error('Erro ao ler json:', error);
       return null;
     }
   }

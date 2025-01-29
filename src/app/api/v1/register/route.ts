@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
       await sessionService.createSession(result.data!!);
       return NextResponse.json({ status: 200, route: '/home' });
     } catch (error) {
-      console.error('Request failed error:', error);
       return NextResponse.json(
         { error: 'Internal server error' },
         { status: 500 }

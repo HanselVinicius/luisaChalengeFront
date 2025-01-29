@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ status: 200});
     } catch (error) {
-        console.error('Request failed error:', error);
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }
@@ -49,7 +48,6 @@ export async function DELETE(req: NextRequest) {
 
         return NextResponse.json({ status: 200 });
     } catch (error) {
-        console.error("Request failed error:", error);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }
