@@ -13,5 +13,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/home","/favorites-list"],
+  matcher: ["/home","/favorite-list"],
 };
