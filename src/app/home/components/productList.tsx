@@ -3,19 +3,33 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
 import { favorite } from "../actions/favorite";
-
+import { FavoriteList } from "@/app/domain/FavoriteList";
+import { FavoriteListForm } from "./favoriteListForm";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Product } from "@/app/domain/Product";
 
 export default function ProductList() {
   const [products, setProducts] = useState<ProductDto[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+  const [favoriteList, setFavoriteList] = useState<FavoriteList | null>();
   const router = useRouter();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_PRODUCTS_API_URL as string;
-        const response = await fetch(`${apiUrl}products`);
+        const response = await fetch(`${apiUrl}/products`);
+
+        if (!response.ok) throw new Error("Erro na API de produtos");
+
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -25,7 +39,21 @@ export default function ProductList() {
       }
     };
 
+    const fetchFavorites = async () => {
+      try {
+        const response = await fetch("/api/v1/favorite-list");
+
+        if (!response.ok) return;
+        const result = await response.json();
+        setFavoriteList(result);
+        setFavorites(result.favoriteList.products.map((product:Product) => product.id));
+      } catch (error) {
+        console.error("Erro ao buscar favoritos:", error);
+      }
+    };
+
     fetchProducts();
+    fetchFavorites();
   }, []);
 
   const toggleFavorite = async (product: ProductDto) => {
@@ -43,12 +71,30 @@ export default function ProductList() {
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Lista de Produtos</h1>
-        <button
-          onClick={() => router.push("/favoritos")}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
-        >
-          Lista de Favoritos
-        </button>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              onClick={() => {
+                if (favoriteList) {
+                  router.push("/favorite-list");
+                }
+              }}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+            >
+              Lista de Favoritos
+            </Button>
+          </DialogTrigger>
+
+          {!favoriteList && (
+            <DialogContent className="max-w-md mx-auto space-y-2">
+              <DialogTitle className="text-lg">
+                Criar Lista de Favoritos
+              </DialogTitle>
+              <FavoriteListForm />
+            </DialogContent>
+          )}
+        </Dialog>
       </div>
 
       {loading ? (
@@ -68,9 +114,10 @@ export default function ProductList() {
               <h2 className="text-xl font-semibold mt-3">{product.title}</h2>
               <p className="text-gray-600 text-sm">{product.category}</p>
               <p className="text-gray-800 font-bold">R$ {product.price}</p>
-              <p className="text-gray-500 text-sm mt-2">{product.description}</p>
+              <p className="text-gray-500 text-sm mt-2">
+                {product.description}
+              </p>
 
-              {/* Botão de Favorito */}
               <button
                 onClick={() => toggleFavorite(product)}
                 className="absolute top-4 right-4"

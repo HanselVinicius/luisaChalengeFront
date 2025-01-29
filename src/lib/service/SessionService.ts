@@ -10,6 +10,7 @@ export class SessionService {
   ) {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + expirationHours);
+    await this.deleteSession();
     (await cookies()).set(SessionService.SESSION_KEY, JSON.stringify(data), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
