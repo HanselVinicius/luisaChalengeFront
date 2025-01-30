@@ -63,7 +63,7 @@ export default function ProductList() {
       return;
     }
 
-    if(favorites.length === 5){
+    if(favorites.length === 5 && !isCurrentlyFavorite){
       toast.error("Você já possui 5 produtos favoritos");
       return;
     }
