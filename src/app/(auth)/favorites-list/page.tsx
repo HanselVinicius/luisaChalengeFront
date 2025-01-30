@@ -54,9 +54,7 @@ export default function FavoritesPage(){
       setFavoriteList(null);
       setIsDeleteOpen(false);
 
-      setTimeout(() => {
-        router.push("/home");
-      }, 2000);
+      router.push("/home");
     } catch (error) {
       toast.error("Erro ao deletar a lista. Tente novamente.");
     }

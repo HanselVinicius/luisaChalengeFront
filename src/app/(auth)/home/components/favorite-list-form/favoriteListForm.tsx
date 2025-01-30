@@ -61,9 +61,7 @@ export function FavoriteListForm({ initialName = "", initialDescription = "", on
         setErrors({ name: false, description: false });
       }
 
-      setTimeout(() => {
-        router.push("/favorites-list");
-      }, 2000);
+      router.push("/favorites-list");
     } catch (error) {
       setMessage({ type: "error", text: "Ocorreu um erro. Tente novamente." });
     } finally {
