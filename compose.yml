@@ -7,7 +7,7 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - ./src/main:/app/src/main
+      - ../LuisaChallenge/src/main:/app/src/main
     restart: always
     networks:
       - challenge_network
@@ -40,9 +40,10 @@ services:
         - 3000:3000
       volumes:
         - .:/app
-      command: sh -c "npm install && npm run dev"
+        - ./node_modules:/app/node_modules
       environment:
         - NODE_ENV=development
+      command: sh -c "npm install && npm run dev"
       networks:
         - challenge_network
 networks:
