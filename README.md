@@ -48,7 +48,7 @@ Para rodar o projeto de forma rápida utilizando **Docker Compose**, siga os pas
 ```bash
 docker compose up -d
 ```
-OBS: O container pode demorar um pouco para ser construído na primeira execução.
+OBS: Deixar tanto o frontend quanto o Backend no mesmo diretório para que funcione com êxito e o container pode demorar um pouco para ser construído na primeira execução.
 
 4.2. Rodando Localmente
 Se preferir rodar o projeto localmente, siga os passos abaixo:
